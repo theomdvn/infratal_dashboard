@@ -8,13 +8,20 @@ from accueil import database
 st.markdown("## Comparer TAL")
 st.sidebar.markdown("# Comparer TAL")
 
+@st.cache_data
 def anyrate(df,from_currency,to_currency):
     x = (1/df[from_currency])*df[to_currency]
     return x
+
+@st.cache_data
 def XXXTAL(df, from_currency):
     x = (1/df[from_currency])*(1/df['TAL'])
     return x
 
+@st.cache_data
+def qtytal(df, from_currency):
+    x = 1000*(df[from_currency])*df['TAL'][0]
+    return x
 df = database
 
 df['EURUSD'] = 1/df['USDEUR']
@@ -55,12 +62,37 @@ else:
 
 col1, col2 = st.columns([3, 1])
 
+qty = 1000
+
 fig = go.Figure()
 
 if currency == 'EUR':
-    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=1/df['TAL'], name='EURTAL'))    
+    
+    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=1000*filtered_df['TAL'], name='EURTAL'))
+    
+    currency_qty = 1000*(filtered_df['TAL'].tail(1).values[0])
+    final_currency_qty = 1000*(filtered_df['TAL'].head(1).values[0])
+    percentage_difference = (final_currency_qty - currency_qty) / final_currency_qty * 100
+
+    col2.markdown(f'# 1000 TAL on {start_date.split(" ")[0]} would cost you {round(currency_qty,2)} {currency}')
+
+    col2.markdown("""---""")
+
+    col2.markdown(f'# 1000 TAL on {end_date.split(" ")[0]} would cost you {round(final_currency_qty,2)} {currency}')
+
+    col2.markdown("""---""")
+    if percentage_difference > 0:
+        col2.markdown(f'# {currency} has lost {round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
+    else:
+        col2.markdown(f'# {currency} has won {-round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
+
+    data = 1/filtered_df['TAL']
+    data = data.pct_change()
+    
 else:
-    talqty = (XXXTAL(filtered_df,currency))
+
+    talqty = 1/(XXXTAL(filtered_df,currency))*1000
+
     fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=talqty, name=f'{currency}TAL'))
     
     currency_qty = 1000*1/(XXXTAL(filtered_df,currency).tail(1).values[0])
@@ -78,6 +110,9 @@ else:
         col2.markdown(f'# {currency} has lost {round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
     else:
         col2.markdown(f'# {currency} has won {-round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
+    
+    data = talqty
+    data = data.pct_change()
 
 
 fig.update_layout(title='Currency Comparison',
@@ -89,4 +124,64 @@ fig.update_layout(title='Currency Comparison',
 
 col1.plotly_chart(fig)
 
+col1.write(f'Ce graphique représente la valeur de 1000 TAL en {currency}')
+
+if col1.checkbox(f'See change rate for {currency}TAL'):
+    fig2 = go.Figure()
+
+    if currency == 'EUR':
+    
+        fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=1/filtered_df['TAL'], name='EURTAL'))
+    
+    else:
+
+        fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=(XXXTAL(filtered_df,currency)), name=f'{currency}TAL'))
+    
+    fig2.update_layout(title=f'Currency rate for {currency}TAL',
+                        xaxis_title='Date',
+                        yaxis_title='Rate',
+            width=1200,
+            height=800
+            )
+
+    col1.plotly_chart(fig2)
+
 st.markdown("""---""")
+
+# --- Statistics --- #
+
+mean = data.mean()
+std_dev = data.std()
+var_95 = data.quantile(0.05)
+es_95 = data[data <= data.quantile(0.05)].mean()
+min = data.min()
+
+statistics_df = pd.DataFrame({
+        'Currency': [f'{currency}TAL'],
+        'Mean Return': [data.mean()],
+        'Standard Deviation': [data.std()],
+        'VaR': [data.quantile(0.05)],
+        'ES': [data[data <= data.quantile(0.05)].mean()],
+        'Max Drawdown': [data.min()],
+        })
+statistics_df.set_index('Currency', inplace=True)
+st.markdown("<h1 style='font-size:18px;'>Statistics : </h1>", unsafe_allow_html=True)
+st.dataframe(statistics_df)  
+
+
+if st.checkbox('Learn more about statistics'):
+    st.markdown('---')
+    st.markdown('## Mean Return')
+    st.markdown("Rendement moyen) : Il s'agit de la moyenne des rendements d'un investissement sur une période donnée. Cela indique la performance moyenne d'un investissement sur cette période.")
+    st.markdown('---')
+    st.markdown('## Standard Deviation')
+    st.markdown("(Écart-type) : C'est une mesure de la dispersion des rendements d'un investissement par rapport à son rendement moyen. Plus l'écart-type est élevé, plus les rendements peuvent varier de manière significative par rapport à la moyenne.")
+    st.markdown('---')
+    st.markdown('## VaR')
+    st.markdown("(Value at Risk) : La VaR (ou valeur en risque) est une mesure statistique qui estime les pertes potentielles maximales (en termes de valeur monétaire) auxquelles un investissement ou un portefeuille peut être exposé, avec un certain niveau de confiance et sur une certaine période. Par exemple, une VaR de 5% à un horizon de 1 jour indique que les pertes ne dépasseront pas un certain montant avec une probabilité de 95% sur une journée.")
+    st.markdown('---')
+    st.markdown('## ES')
+    st.markdown("(Expected Shortfall) : L'ES (ou rendement espéré en cas de perte) est une autre mesure du risque qui complète la VaR. Il représente la moyenne des pertes qui dépassent la VaR. Par exemple, si la VaR est de 10 000 € avec une probabilité de 95%, l'ES pourrait être de 15 000 €, ce qui signifie que si les pertes dépassent la VaR, elles sont en moyenne de 15 000 €.")
+    st.markdown('---')
+    st.markdown('## Max Drawdown a 1 jour')
+    st.markdown("(Perte maximale) : Il s'agit de la plus grande baisse en pourcentage du prix en une journée.")
