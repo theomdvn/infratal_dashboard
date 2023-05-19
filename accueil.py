@@ -135,9 +135,10 @@ def CallDatabase():
 
     database['TALEUR'] = database['TALEUR']*0.001
 
+    database = database.fillna(method='ffill')
+
     database = database[::-1]
 
-    database = database.fillna(method='ffill')
     return database
 
 database = CallDatabase()
