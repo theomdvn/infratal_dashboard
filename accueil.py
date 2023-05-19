@@ -121,7 +121,7 @@ def CallDatabase():
     bce = LoadBCE()
     fred = LoadFred()
     database = bce.join(fred, how='left')
-    
+    database = database.fillna(method='ffill')
 
     datagld = yf.download('GC=F', start = start_date, end=today, progress=False)['Adj Close']
 
