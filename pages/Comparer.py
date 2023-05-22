@@ -73,8 +73,8 @@ if currency == 'EUR':
     
     fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=1000*filtered_df['TAL'], name='TALEUR'))
     
-    currency_qty = 1000*(filtered_df['TAL'].tail(1).values[0])
-    final_currency_qty = 1000*(filtered_df['TAL'].head(1).values[0])
+    currency_qty = 1000*(filtered_df['TAL'].head(1).values[0])
+    final_currency_qty = 1000*(filtered_df['TAL'].tail(1).values[0])
     percentage_difference = (final_currency_qty - currency_qty) / final_currency_qty * 100
 
     col2.markdown(f'# 1000 TAL on {start_date.split(" ")[0]} would cost you {round(currency_qty,2)} {currency}')
@@ -99,8 +99,8 @@ else:
 
     fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=talqty, name=f'TAL{currency}'))
     
-    currency_qty = 1000*1/(XXXTAL(filtered_df,currency).tail(1).values[0])
-    final_currency_qty = 1000*1/(XXXTAL(filtered_df,currency).head(1).values[0])
+    currency_qty = 1000*1/(XXXTAL(filtered_df,currency).head(1).values[0])
+    final_currency_qty = 1000*1/(XXXTAL(filtered_df,currency).tail(1).values[0])
     percentage_difference = (final_currency_qty - currency_qty) / final_currency_qty * 100
 
     col2.markdown(f'# 1000 TAL on {start_date.split(" ")[0]} would cost you {round(currency_qty,2)} {currency}')
@@ -135,7 +135,7 @@ elif currency2 == 'ALL' and currency != 'EUR':
 
 elif currency2 != 'ALL' and currency == 'EUR':
      if currency2 != 'EUR':
-        currency_qty = eur_qty*(filtered_df[currency2][-1])
+        currency_qty = eur_qty*(filtered_df[currency2][0])
 
         cur2_cur = currency_qty*(1/filtered_df[currency2])
 
@@ -146,7 +146,7 @@ elif currency2 != 'ALL' and currency == 'EUR':
 elif currency2 != 'ALL' and currency != 'EUR':
 
     # 1000 TAL -> currency 2 at day 0
-    currency_qty = talqty.tail(1).values[0]*anyrate(filtered_df.iloc[-1].T,currency,currency2)
+    currency_qty = talqty.head(1).values[0]*anyrate(filtered_df.iloc[0].T,currency,currency2)
 
     # 1000 TAL in currency 2 for x days
 
