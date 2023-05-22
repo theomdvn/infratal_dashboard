@@ -62,8 +62,6 @@ if checkbox:
 else:
     currency2 = currency
 
-col1, col2 = st.columns([3, 1])
-
 qty = 1000
 
 fig = go.Figure()
@@ -73,25 +71,13 @@ if currency == 'EUR':
     
     fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=1000*filtered_df['TAL'], name='TALEUR'))
     
-    currency_qty = 1000*(filtered_df['TAL'].head(1).values[0])
+    currency_qty_1 = 1000*(filtered_df['TAL'].head(1).values[0])
     final_currency_qty = 1000*(filtered_df['TAL'].tail(1).values[0])
-    percentage_difference = (final_currency_qty - currency_qty) / final_currency_qty * 100
-
-    col2.markdown(f'# 1000 TAL on {start_date.split(" ")[0]} would cost you {round(currency_qty,2)} {currency}')
-
-    col2.markdown("""---""")
-
-    col2.markdown(f'# 1000 TAL on {end_date.split(" ")[0]} would cost you {round(final_currency_qty,2)} {currency}')
-
-    col2.markdown("""---""")
-    if percentage_difference > 0:
-        col2.markdown(f'# {currency} has lost {round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
-    else:
-        col2.markdown(f'# {currency} has won {-round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
+    percentage_difference = (final_currency_qty - currency_qty_1) / final_currency_qty * 100
 
     data = 1/filtered_df['TAL']
     data = data.pct_change()
-    eur_qty = round(currency_qty,2)
+    eur_qty = round(currency_qty_1,2)
     
 else:
 
@@ -99,26 +85,27 @@ else:
 
     fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=talqty, name=f'TAL{currency}'))
     
-    currency_qty = 1000*1/(XXXTAL(filtered_df,currency).head(1).values[0])
+    currency_qty_1 = 1000*1/(XXXTAL(filtered_df,currency).head(1).values[0])
     final_currency_qty = 1000*1/(XXXTAL(filtered_df,currency).tail(1).values[0])
-    percentage_difference = (final_currency_qty - currency_qty) / final_currency_qty * 100
+    percentage_difference = (final_currency_qty - currency_qty_1) / final_currency_qty * 100
 
-    col2.markdown(f'# 1000 TAL on {start_date.split(" ")[0]} would cost you {round(currency_qty,2)} {currency}')
+    # col2.markdown(f' 1000 TAL on {start_date.split(" ")[0]} would cost you {round(currency_qty,2)} {currency}')
 
-    col2.markdown("""---""")
+    # col2.markdown("""---""")
 
-    col2.markdown(f'# 1000 TAL on {end_date.split(" ")[0]} would cost you {round(final_currency_qty,2)} {currency}')
+    # col2.markdown(f' 1000 TAL on {end_date.split(" ")[0]} would cost you {round(final_currency_qty,2)} {currency}')
 
-    col2.markdown("""---""")
-    if percentage_difference > 0:
-        col2.markdown(f'# {currency} has lost {round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
-    else:
-        col2.markdown(f'# {currency} has won {-round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
+    # col2.markdown("""---""")
+    # if percentage_difference > 0:
+    #     col2.markdown(f' {currency} has lost {round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
+    # else:
+    #     col2.markdown(f' {currency} has won {-round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
     
     data = talqty
     data = data.pct_change()
 
 compare = pd.DataFrame()
+
 if currency2 == 'ALL' and currency == 'EUR':
     for i in filtered_df.columns:
         if i != 'TAL' and i != 'GLD':
@@ -140,8 +127,9 @@ elif currency2 != 'ALL' and currency == 'EUR':
         cur2_cur = currency_qty*(1/filtered_df[currency2])
 
         fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=cur2_cur, name=f'{currency2}{currency}'))
-
+        final_qty_cur =  cur2_cur.tail(1).values[0] 
         compare[f'{currency}{currency2}'] = filtered_df[currency2].pct_change()
+
 
 elif currency2 != 'ALL' and currency != 'EUR':
 
@@ -153,21 +141,21 @@ elif currency2 != 'ALL' and currency != 'EUR':
     cur2_cur = currency_qty*(anyrate(filtered_df,currency2,currency)) 
     
     fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=cur2_cur, name=f'{currency2}{currency}'))
-    
+    final_qty_cur =  cur2_cur.tail(1).values[0] 
     compare[f'{currency}{currency2}'] = cur2_cur.pct_change()
+
 
 fig.update_layout(title='Currency Comparison',
                     xaxis_title='Date',
                     yaxis_title='Rate',
-        width=1200,
-        height=800
+                    height=800
         )
 
-col1.plotly_chart(fig)
+st.plotly_chart(fig,  use_container_width=True)
 
-col1.write(f'Ce graphique représente la valeur de 1000 TAL en {currency}')
+st.write(f'Ce graphique représente la valeur de 1000 TAL en {currency}')
 
-if col1.checkbox(f'See change rate for {currency}TAL'):
+if st.checkbox(f'See change rate for {currency}TAL'):
     fig2 = go.Figure()
 
     if currency == 'EUR':
@@ -180,14 +168,27 @@ if col1.checkbox(f'See change rate for {currency}TAL'):
     fig2.update_layout(title=f'Currency rate for {currency}TAL',
                         xaxis_title='Date',
                         yaxis_title='Rate',
-            width=1200,
             height=800
             )
 
-    col1.plotly_chart(fig2)
-
+    st.plotly_chart(fig2,  use_container_width=True)
 st.markdown("""---""")
+st.markdown(f' 1000 TAL on {start_date.split(" ")[0]} would cost you {round(currency_qty_1,2)} {currency} || 1000 TAL on {end_date.split(" ")[0]} would cost you {round(final_currency_qty,2)} {currency}')
+if percentage_difference > 0:
+        st.markdown(f' {currency} has lost {round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
+else:
+        st.markdown(f' {currency} has won {-round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
 
+if checkbox and currency2 != 'ALL':
+    st.markdown("""---""")
+    st.markdown(f' If you changed {round(currency_qty_1,2)} {currency} in {currency2}, you would have {round(final_qty_cur,2)} {currency} at the end of the period')
+    percentage_difference_2 = (final_qty_cur - currency_qty_1) / final_qty_cur * 100
+
+    if percentage_difference_2 > 0:
+            st.markdown(f' {currency} has lost {round(percentage_difference_2,2)}% of its value in {delta.days} days when changed in {currency2} ')
+    else:
+            st.markdown(f' {currency} has won {-round(percentage_difference_2,2)}% of its value in {delta.days} days when changed in {currency2} ')
+st.markdown("""---""")
 # --- Statistics --- #
 
 statistics_df = pd.DataFrame({
