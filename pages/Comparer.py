@@ -114,6 +114,17 @@ else:
     data = talqty
     data = data.pct_change()
 
+if currency2 == 'ALL' and currency == 'EUR':
+    compare = pd.DataFrame()
+    for i in filtered_df.columns:
+        #fig.add_trace(go.Scatter(x = pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y = cur2_cur, name=f'{i}{currency}'))
+        if i != 'TAL' and i != 'GLD':
+            compare[f'{currency}{i}'] = filtered_df[i].pct_change()
+        elif i == 'TAL':
+            compare[f'{currency}{i}'] = (filtered_df[i]).pct_change()
+        elif i == 'GLD':
+            compare[f'{currency}{i}'] = (filtered_df[i]).pct_change()
+
 
 fig.update_layout(title='Currency Comparison',
                     xaxis_title='Date',
@@ -157,7 +168,7 @@ es_95 = data[data <= data.quantile(0.05)].mean()
 min = data.min()
 
 statistics_df = pd.DataFrame({
-        'Currency': [f'{currency}TAL'],
+        'Currency': [f'TAL{currency}'],
         'Mean Return': [data.mean()],
         'Standard Deviation': [data.std()],
         'VaR': [data.quantile(0.05)],
@@ -166,7 +177,19 @@ statistics_df = pd.DataFrame({
         })
 statistics_df.set_index('Currency', inplace=True)
 st.markdown("<h1 style='font-size:18px;'>Statistics : </h1>", unsafe_allow_html=True)
-st.dataframe(statistics_df)  
+st.dataframe(statistics_df)
+
+if checkbox and currency2 == 'ALL' and currency == 'EUR':
+    statistics_compare = compare.describe()
+    statistics_compare.loc['VAR'] = compare.quantile(0.05)
+    statistics_compare.loc['ES'] = compare[compare <= compare.quantile(0.05)].mean()
+    statistics_compare = statistics_compare.T
+    statistics_compare = statistics_compare.drop(columns=['count', '25%', '50%', '75%'])
+    statistics_compare = statistics_compare.rename(columns={'mean': 'Mean Return', 'std': 'Standard Deviation', 'min': 'Max Drawdown', 'max': 'Max Return'})
+    st.markdown("""---""")
+    st.dataframe(statistics_compare)
+
+
 
 
 if st.checkbox('Learn more about statistics'):
