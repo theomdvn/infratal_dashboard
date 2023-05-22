@@ -137,10 +137,8 @@ def CallDatabase():
 
     database = database.fillna(method='ffill')
 
-    database = database[::-1]
-
     return database
 
 database = CallDatabase()
 
-st.dataframe(database)
+st.dataframe(database[::-1])

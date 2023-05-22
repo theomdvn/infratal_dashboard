@@ -22,6 +22,7 @@ def XXXTAL(df, from_currency):
 def qtytal(df, from_currency):
     x = 1000*(df[from_currency])*df['TAL'][0]
     return x
+
 df = database
 
 df['EURUSD'] = 1/df['USDEUR']
@@ -52,6 +53,7 @@ currency1 = ['EUR'] + liste_c
 
 filtered_df = df.loc[start_date:end_date]
 
+
 currency = st.sidebar.selectbox('Which currency are you protecting :', currency1)
 
 checkbox = st.sidebar.checkbox('Compare TAL with another currency')
@@ -66,9 +68,10 @@ qty = 1000
 
 fig = go.Figure()
 
+
 if currency == 'EUR':
     
-    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=1000*filtered_df['TAL'], name='EURTAL'))
+    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=1000*filtered_df['TAL'], name='TALEUR'))
     
     currency_qty = 1000*(filtered_df['TAL'].tail(1).values[0])
     final_currency_qty = 1000*(filtered_df['TAL'].head(1).values[0])
@@ -88,12 +91,13 @@ if currency == 'EUR':
 
     data = 1/filtered_df['TAL']
     data = data.pct_change()
+    eur_qty = round(currency_qty,2)
     
 else:
 
     talqty = 1/(XXXTAL(filtered_df,currency))*1000
 
-    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=talqty, name=f'{currency}TAL'))
+    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=talqty, name=f'TAL{currency}'))
     
     currency_qty = 1000*1/(XXXTAL(filtered_df,currency).tail(1).values[0])
     final_currency_qty = 1000*1/(XXXTAL(filtered_df,currency).head(1).values[0])
@@ -114,17 +118,43 @@ else:
     data = talqty
     data = data.pct_change()
 
+compare = pd.DataFrame()
 if currency2 == 'ALL' and currency == 'EUR':
-    compare = pd.DataFrame()
     for i in filtered_df.columns:
-        #fig.add_trace(go.Scatter(x = pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y = cur2_cur, name=f'{i}{currency}'))
         if i != 'TAL' and i != 'GLD':
             compare[f'{currency}{i}'] = filtered_df[i].pct_change()
-        elif i == 'TAL':
-            compare[f'{currency}{i}'] = (filtered_df[i]).pct_change()
-        elif i == 'GLD':
-            compare[f'{currency}{i}'] = (filtered_df[i]).pct_change()
 
+
+elif currency2 == 'ALL' and currency != 'EUR':
+    
+    for i in filtered_df.columns:
+        currency_qty = anyrate(filtered_df.iloc[0].T,currency,i)
+        cur2_cur = currency_qty*anyrate(filtered_df,i,currency)
+        if i != 'TAL' and i != 'GLD':
+            compare[f'{currency}{i}'] = cur2_cur.pct_change()
+
+elif currency2 != 'ALL' and currency == 'EUR':
+     if currency2 != 'EUR':
+        currency_qty = eur_qty*(filtered_df[currency2][-1])
+
+        cur2_cur = currency_qty*(1/filtered_df[currency2])
+
+        fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=cur2_cur, name=f'{currency2}{currency}'))
+
+        compare[f'{currency}{currency2}'] = filtered_df[currency2].pct_change()
+
+elif currency2 != 'ALL' and currency != 'EUR':
+
+    # 1000 TAL -> currency 2 at day 0
+    currency_qty = talqty.tail(1).values[0]*anyrate(filtered_df.iloc[-1].T,currency,currency2)
+
+    # 1000 TAL in currency 2 for x days
+
+    cur2_cur = currency_qty*(anyrate(filtered_df,currency2,currency)) 
+    
+    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=cur2_cur, name=f'{currency2}{currency}'))
+    
+    compare[f'{currency}{currency2}'] = cur2_cur.pct_change()
 
 fig.update_layout(title='Currency Comparison',
                     xaxis_title='Date',
@@ -145,7 +175,6 @@ if col1.checkbox(f'See change rate for {currency}TAL'):
         fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=1/filtered_df['TAL'], name='EURTAL'))
     
     else:
-
         fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=(XXXTAL(filtered_df,currency)), name=f'{currency}TAL'))
     
     fig2.update_layout(title=f'Currency rate for {currency}TAL',
@@ -161,12 +190,6 @@ st.markdown("""---""")
 
 # --- Statistics --- #
 
-mean = data.mean()
-std_dev = data.std()
-var_95 = data.quantile(0.05)
-es_95 = data[data <= data.quantile(0.05)].mean()
-min = data.min()
-
 statistics_df = pd.DataFrame({
         'Currency': [f'TAL{currency}'],
         'Mean Return': [data.mean()],
@@ -179,7 +202,7 @@ statistics_df.set_index('Currency', inplace=True)
 st.markdown("<h1 style='font-size:18px;'>Statistics : </h1>", unsafe_allow_html=True)
 st.dataframe(statistics_df)
 
-if checkbox and currency2 == 'ALL' and currency == 'EUR':
+if checkbox:
     statistics_compare = compare.describe()
     statistics_compare.loc['VAR'] = compare.quantile(0.05)
     statistics_compare.loc['ES'] = compare[compare <= compare.quantile(0.05)].mean()
