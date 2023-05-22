@@ -67,8 +67,9 @@ with left_column:
     jpy = output_amount*18000/1000
     cny = output_amount*1600/1000
     sgd = output_amount*80/1000
-    usd = output_amount*float(database.head(1)['GLDUSD'] * 0.2)/1000
-    gold = usd/float(database.head(1)['GLDUSD'])
+    usd = output_amount*float(database.tail(1)['GLDUSD'] * 0.2)/1000
+    st.write(database.tail(1)['GLDUSD'] * 0.2)
+    gold = usd/float(database.tail(1)['GLDUSD'])
 
     data = pd.DataFrame({'Entry currency ': [currency], 'Entry amount ': [qty], 'TAL amount ': [output_amount]})
     repartition = pd.DataFrame({'Currency': ['CHF', 'EUR', 'GBP', 'JPY', 'CNY', 'SGD', 'Gold oz'],
@@ -106,8 +107,8 @@ with right_column:
     jpy2 = qty2*18000/1000
     cny2 = qty2*1600/1000
     sgd2 = qty2*80/1000
-    usd2 = qty2*float(database.head(1)['GLDUSD'] * 0.2)/1000
-    gold2 = usd2/float(database.head(1)['GLDUSD'])
+    usd2 = qty2*float(database.tail(1)['GLDUSD'] * 0.2)/1000
+    gold2 = usd2/float(database.tail(1)['GLDUSD'])
 
     repartition2 = pd.DataFrame({'Currency': ['CHF', 'EUR', 'GBP', 'JPY', 'CNY', 'SGD', 'Gold'],
                             'Amount': [chf2, eur2, gbp2, jpy2, cny2, sgd2, gold2],
