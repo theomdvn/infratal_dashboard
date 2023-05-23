@@ -5,9 +5,11 @@ import plotly.graph_objects as go
 import plotly_express as px
 import numpy as np
 import requests
-from accueil import database
-st.markdown("## Poids Historiques ")
-st.sidebar.markdown("# Poids Historiques ")
+from Accueil import database
+st.markdown("## Historical Weights ")
+st.sidebar.markdown("#  Historical Weights ")
+st.sidebar.image('https://i.postimg.cc/g0JMMBbp/LOGO-TAL-AVEC-SIGNATURE.png', use_column_width=True)
+
 df = database
 
 # --------------------------------------------------------------------------------- # 
@@ -27,8 +29,7 @@ weights_daily = pd.DataFrame([w_chf,w_eur,w_gbp,w_jpy,w_cny,w_sgd,w_gold])
 weights_daily = weights_daily.T
 weights_daily.columns = ['CHF','EUR','GBP','JPY','CNY','SGD','GOLD']
 
-st.markdown("<h1 style='font-size:18px;'>Historic weights: </h1>", unsafe_allow_html=True)
-
+# --------------------------------------------------------------------------------- #
 
 col1, col2 = st.columns([3, 1])
 
@@ -42,7 +43,7 @@ def histo():
     fig_w.add_trace(go.Scatter(x=pd.to_datetime(weights_daily.index, format='%d/%m/%Y %H:%M'),y=weights_daily['CNY'], name='CNY'))
     fig_w.add_trace(go.Scatter(x=pd.to_datetime(weights_daily.index, format='%d/%m/%Y %H:%M'),y=weights_daily['SGD'], name='SGD'))
     fig_w.add_trace(go.Scatter(x=pd.to_datetime(weights_daily.index, format='%d/%m/%Y %H:%M'),y=weights_daily['GOLD'], name='GOLD'))
-    fig_w.update_layout(title='Currency Weights',      
+    fig_w.update_layout(title='Basket components weights',      
                         width=1100,
         height=800)
     return fig_w
@@ -57,6 +58,6 @@ specific_row = weights_daily.loc[w_date]
 repartition = pd.DataFrame({'Currency': ['CHF', 'EUR', 'GBP', 'JPY', 'CNY', 'SGD', 'Gold'],
                             'Weights': [specific_row['CHF'], specific_row['EUR'], specific_row['GBP'], specific_row['JPY'], specific_row['CNY'], specific_row['SGD'], specific_row['GOLD']]})
 
-fig_weights = px.pie(repartition, values='Weights', names='Currency', title='Currency Repartition')
+fig_weights = px.pie(repartition, values='Weights', names='Currency', title='Basket components distribution')
 
-col2.plotly_chart(fig_weights,user_container_width=True)
+col2.plotly_chart(fig_weights)

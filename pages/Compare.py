@@ -4,9 +4,10 @@ import datetime as dt
 import plotly.graph_objects as go
 import plotly_express as px
 import numpy as np
-from accueil import database
-st.markdown("## Comparer TAL")
-st.sidebar.markdown("# Comparer TAL")
+from Accueil import database
+st.markdown("## Compare TAL")
+st.sidebar.markdown("# Compare TAL")
+st.sidebar.image('https://i.postimg.cc/g0JMMBbp/LOGO-TAL-AVEC-SIGNATURE.png', width=200)
 
 @st.cache_data
 def anyrate(df,from_currency,to_currency):
@@ -123,14 +124,14 @@ elif currency2 == 'ALL' and currency != 'EUR':
 elif currency2 == 'GOLD' and currency == 'EUR':
     gold_qty_eur = currency_qty_1*(1/filtered_df['GLD'].head(1).values[0]) # How much oz of gold you can buy with 1000 TAL at day 0
     gldeur = gold_qty_eur*(filtered_df['GLD'])
-    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=gldeur, name=f'{currency2}{currency}'))
+    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=gldeur, name=f'{currency2}/{currency}'))
     compare[f'{currency2}{currency}'] = gldeur.pct_change()
     final_qty_cur =  gldeur.tail(1).values[0]
 
 elif currency2 == 'GOLD' and currency != 'EUR':
     gold_qty_cur = currency_qty_1*(1/filtered_df[currency].head(1).values[0])*(1/filtered_df['GLD'].head(1).values[0]) # How much oz of gold you can buy with 1000 TAL at day 0
     gldcur = (gold_qty_cur*(filtered_df['GLD']))*(filtered_df[currency])
-    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=gldcur, name=f'{currency2}{currency}'))
+    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=gldcur, name=f'{currency2}/{currency}'))
     compare[f'{currency2}{currency}'] = gldcur.pct_change()
     final_qty_cur =  gldcur.tail(1).values[0]
 
@@ -168,9 +169,9 @@ fig.update_layout(title='Currency Comparison',
 
 st.plotly_chart(fig,  use_container_width=True)
 
-st.write(f'Ce graphique représente la valeur de 1000 TAL en {currency}')
+st.markdown(f'*This graph represent the value of 1000 TAL in {currency}*')
 
-if st.checkbox(f'See change rate for {currency}TAL'):
+if st.checkbox(f'See change rate for {currency}/TAL'):
     fig2 = go.Figure()
 
     if currency == 'EUR':
@@ -180,7 +181,7 @@ if st.checkbox(f'See change rate for {currency}TAL'):
     else:
         fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=(XXXTAL(filtered_df,currency)), name=f'{currency}TAL'))
     
-    fig2.update_layout(title=f'Currency rate for {currency}TAL',
+    fig2.update_layout(title=f'Currency rate for {currency}/TAL',
                         xaxis_title='Date',
                         yaxis_title='Rate',
             height=800
@@ -188,8 +189,8 @@ if st.checkbox(f'See change rate for {currency}TAL'):
 
     st.plotly_chart(fig2,  use_container_width=True)
 st.markdown("""---""")
-st.markdown(f' 1000 TAL on {start_date.split(" ")[0]} would cost you {round(currency_qty_1,2)} {currency}')
-st.markdown(f' 1000 TAL on {end_date.split(" ")[0]} would cost you {round(final_currency_qty,2)} {currency}')
+st.markdown(f' 1000 TAL on {start_date.split(" ")[0]} would have costed you {round(currency_qty_1,2)} {currency}')
+st.markdown(f' 1000 TAL on {end_date.split(" ")[0]} would bring you {round(final_currency_qty,2)} {currency}')
 if percentage_difference > 0:
         st.markdown(f' {currency} has lost {round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
 else:

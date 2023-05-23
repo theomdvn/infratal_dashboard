@@ -8,9 +8,9 @@ import yfinance as yf
 
 st.set_page_config(layout="wide")
 
-st.sidebar.markdown("# Accueil ")
+st.sidebar.markdown("# Home ")
 
-st.markdown("<h1 style='text-align: center; color : lightblue;'> Outil d'analyse TAL  </h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color : lightblue;'> Value analysis tool </h1>", unsafe_allow_html=True)
 
 st.markdown("<h1 style='text-align: center; color : lightblue;'>  </h1>", unsafe_allow_html=True)
 
@@ -145,3 +145,4 @@ database = CallDatabase()
 left_co, cent_co,last_co = st.columns(3)
 with cent_co:
     st.image('https://i.postimg.cc/g0JMMBbp/LOGO-TAL-AVEC-SIGNATURE.png')
+
