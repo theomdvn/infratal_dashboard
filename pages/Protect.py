@@ -4,8 +4,8 @@ import plotly_express as px
 import pandas as pd
 import requests
 import json
-from Accueil import database
-from Accueil import currency_country_map
+from Home import database
+from Home import currency_country_map
 
 st.sidebar.markdown('# Protect with TAL')
 

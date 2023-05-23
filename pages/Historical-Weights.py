@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import plotly_express as px
 import numpy as np
 import requests
-from Accueil import database
+from Home import database
 st.markdown("## Historical Weights ")
 st.sidebar.markdown("#  Historical Weights ")
 st.sidebar.image('https://i.postimg.cc/g0JMMBbp/LOGO-TAL-AVEC-SIGNATURE.png', use_column_width=True)
