@@ -8,11 +8,11 @@ import yfinance as yf
 
 st.set_page_config(layout="wide")
 
-st.markdown("<h1 style='text-align: center'> Page d'accueil INFRATAL </h1>", unsafe_allow_html=True)
-
 st.sidebar.markdown("# Accueil ")
 
-st.markdown("<h2 style='text-align: center; color : lightblue;'> Outil d'analyse TAL  </h2>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color : lightblue;'> Outil d'analyse TAL  </h1>", unsafe_allow_html=True)
+
+st.markdown("<h1 style='text-align: center; color : lightblue;'>  </h1>", unsafe_allow_html=True)
 
 #st.image('https://imgur.com/a/nMyIfAo')
 today = datetime.datetime.today().strftime('%Y-%m-%d')
@@ -141,4 +141,7 @@ def CallDatabase():
 
 database = CallDatabase()
 
-st.dataframe(database[::-1])
+#st.dataframe(database[::-1])
+left_co, cent_co,last_co = st.columns(3)
+with cent_co:
+    st.image('https://i.postimg.cc/g0JMMBbp/LOGO-TAL-AVEC-SIGNATURE.png')
