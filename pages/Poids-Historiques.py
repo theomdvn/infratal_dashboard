@@ -47,7 +47,7 @@ def histo():
         height=800)
     return fig_w
 
-col1.plotly_chart(histo())
+col1.plotly_chart(histo(), use_container_width=True)
 
 w_date = col2.date_input('Select a date:',
                                  dt.date(2018, 3, 15))
@@ -59,4 +59,4 @@ repartition = pd.DataFrame({'Currency': ['CHF', 'EUR', 'GBP', 'JPY', 'CNY', 'SGD
 
 fig_weights = px.pie(repartition, values='Weights', names='Currency', title='Currency Repartition')
 
-col2.plotly_chart(fig_weights)
+col2.plotly_chart(fig_weights,user_container_width=True)
