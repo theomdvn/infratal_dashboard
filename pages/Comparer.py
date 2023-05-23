@@ -71,7 +71,7 @@ if currency == 'EUR':
     
     fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=1000*filtered_df['TAL'], name='TALEUR'))
     
-    currency_qty_1 = 1000*(filtered_df['TAL'].head(1).values[0])
+    currency_qty_1 = 1000*(filtered_df['TAL'].head(1).values[0]) #Value of 1000 TAL in EUR at day 0
     final_currency_qty = 1000*(filtered_df['TAL'].tail(1).values[0])
     percentage_difference = (final_currency_qty - currency_qty_1) / final_currency_qty * 100
 
@@ -120,7 +120,21 @@ elif currency2 == 'ALL' and currency != 'EUR':
         if i != 'TAL' and i != 'GLD':
             compare[f'{currency}{i}'] = cur2_cur.pct_change()
 
-elif currency2 != 'ALL' and currency == 'EUR':
+elif currency2 == 'GOLD' and currency == 'EUR':
+    gold_qty_eur = currency_qty_1*(1/filtered_df['GLD'].head(1).values[0]) # How much oz of gold you can buy with 1000 TAL at day 0
+    gldeur = gold_qty_eur*(filtered_df['GLD'])
+    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=gldeur, name=f'{currency2}{currency}'))
+    compare[f'{currency2}{currency}'] = gldeur.pct_change()
+    final_qty_cur =  gldeur.tail(1).values[0]
+
+elif currency2 == 'GOLD' and currency != 'EUR':
+    gold_qty_cur = currency_qty_1*(1/filtered_df[currency].head(1).values[0])*(1/filtered_df['GLD'].head(1).values[0]) # How much oz of gold you can buy with 1000 TAL at day 0
+    gldcur = (gold_qty_cur*(filtered_df['GLD']))*(filtered_df[currency])
+    fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=gldcur, name=f'{currency2}{currency}'))
+    compare[f'{currency2}{currency}'] = gldcur.pct_change()
+    final_qty_cur =  gldcur.tail(1).values[0]
+
+elif currency2 != 'ALL' and currency == 'EUR' and currency2 != 'GOLD':
      if currency2 != 'EUR':
         currency_qty = eur_qty*(filtered_df[currency2][0])
 
@@ -131,7 +145,7 @@ elif currency2 != 'ALL' and currency == 'EUR':
         compare[f'{currency}{currency2}'] = filtered_df[currency2].pct_change()
 
 
-elif currency2 != 'ALL' and currency != 'EUR':
+elif currency2 != 'ALL' and currency != 'EUR' and currency2 != 'GOLD' and currency2 != currency:
 
     # 1000 TAL -> currency 2 at day 0
     currency_qty = talqty.head(1).values[0]*anyrate(filtered_df.iloc[0].T,currency,currency2)
@@ -143,6 +157,7 @@ elif currency2 != 'ALL' and currency != 'EUR':
     fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=cur2_cur, name=f'{currency2}{currency}'))
     final_qty_cur =  cur2_cur.tail(1).values[0] 
     compare[f'{currency}{currency2}'] = cur2_cur.pct_change()
+
 
 
 fig.update_layout(title='Currency Comparison',

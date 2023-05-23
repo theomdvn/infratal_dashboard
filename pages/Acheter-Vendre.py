@@ -51,7 +51,7 @@ right_column.markdown(f'<style>div.stButton > button {{ width: {right_column_wid
 
 # Add content to the left column
 with left_column:
-    st.header('Buy TAL')
+    left_column.header('Buy TAL')
     # Add your content here
     currency = st.selectbox('Choose a currency to convert in TAL:', ['EUR','USD'] + list(currency_country_map.keys()))
     qty = st.number_input('Select quantity:', min_value=0, max_value=1000000000, value=0, step=1000)
@@ -68,7 +68,6 @@ with left_column:
     cny = output_amount*1600/1000
     sgd = output_amount*80/1000
     usd = output_amount*float(database.tail(1)['GLDUSD'] * 0.2)/1000
-    st.write(database.tail(1)['GLDUSD'] * 0.2)
     gold = usd/float(database.tail(1)['GLDUSD'])
 
     data = pd.DataFrame({'Entry currency ': [currency], 'Entry amount ': [qty], 'TAL amount ': [output_amount]})
@@ -79,7 +78,7 @@ with left_column:
     fig = px.pie(repartition, values=f'Amount in {currency}', names=[f"{row['Currency']} - {round(row['Amount'],2)}" for _, row in repartition.iterrows()], title='Currency Repartition')#'Amount in {currency}'
 
     # Display the plot using Streamlit
-    st.plotly_chart(fig)
+    left_column.plotly_chart(fig, use_container_width=True)
 
     if st.checkbox('Show data'):   
         st.dataframe(data)
@@ -118,7 +117,7 @@ with right_column:
     fig2 = px.pie(repartition2, values=f'Amount in {currency2}', names=[f"{row['Currency']} - {round(row['Amount'],2)}" for _, row in repartition2.iterrows()], title='Currency Repartition')
 
 
-    st.plotly_chart(fig2)
+    right_column.plotly_chart(fig2, use_container_width=True)
    
     if st.checkbox('Show data  '):   
         st.dataframe(data2)
