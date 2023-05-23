@@ -29,9 +29,13 @@ def conversion(from_currency, to_currency, amount):
     return round(float((response_data["convertedAmount"])),2)
 
 def rate_TAL_to_currency(currency):
-    goldamount_in_usd = float(database.head(1)['GLDUSD'] * 0.2)
+    goldamount_in_usd = float(database.tail(1)['GLDUSD'] * 0.2)
     #https://or.fr/api/spot-prices?metal=XAU&currency=EUR&weight_unit=oz&boundaries=1
-    rate = conversion('CHF',currency,100) + conversion('EUR',currency,250) + conversion('GBP',currency,50) + conversion('JPY',currency,18000) + conversion('CNY',currency,1600) + conversion('SGD',currency,80) + conversion('USD',currency,goldamount_in_usd)
+    if currency == 'USD':
+        rate = conversion('CHF',currency,100) + conversion('EUR',currency,250) + conversion('GBP',currency,50) + conversion('JPY',currency,18000) + conversion('CNY',currency,1600) + conversion('SGD',currency,80) + goldamount_in_usd
+    else:
+        rate = conversion('CHF',currency,100) + conversion('EUR',currency,250) + conversion('GBP',currency,50) + conversion('JPY',currency,18000) + conversion('CNY',currency,1600) + conversion('SGD',currency,80) + conversion('USD',currency,goldamount_in_usd)
+    
     return rate*0.001 
 
 def rate_currency_to_TAL(currency):
