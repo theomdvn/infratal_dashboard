@@ -29,18 +29,8 @@ weights_daily.columns = ['CHF','EUR','GBP','JPY','CNY','SGD','GOLD']
 
 st.markdown("<h1 style='font-size:18px;'>Historic weights: </h1>", unsafe_allow_html=True)
 
+
 col1, col2 = st.columns([3, 1])
-
-w_date = col2.date_input('Select a date:',
-                                 dt.date(2018, 3, 15))
-w_date = w_date.strftime('%d/%m/%Y %H:%M')
-specific_row = weights_daily.loc[w_date]
-repartition = pd.DataFrame({'Currency': ['CHF', 'EUR', 'GBP', 'JPY', 'CNY', 'SGD', 'Gold'],
-                            'Weights': [specific_row['CHF'][0], specific_row['EUR'][0], specific_row['GBP'][0], specific_row['JPY'][0], specific_row['CNY'][0], specific_row['SGD'][0], specific_row['GOLD'][0]]})
-
-fig_weights = px.pie(repartition, values='Weights', names='Currency', title='Currency Repartition')
-
-col2.plotly_chart(fig_weights)
 
 @st.cache_data
 def histo():
@@ -58,3 +48,15 @@ def histo():
     return fig_w
 
 col1.plotly_chart(histo())
+
+w_date = col2.date_input('Select a date:',
+                                 dt.date(2018, 3, 15))
+w_date = w_date.strftime('%d/%m/%Y %H:%M')
+specific_row = weights_daily.loc[w_date]
+
+repartition = pd.DataFrame({'Currency': ['CHF', 'EUR', 'GBP', 'JPY', 'CNY', 'SGD', 'Gold'],
+                            'Weights': [specific_row['CHF'], specific_row['EUR'], specific_row['GBP'], specific_row['JPY'], specific_row['CNY'], specific_row['SGD'], specific_row['GOLD']]})
+
+fig_weights = px.pie(repartition, values='Weights', names='Currency', title='Currency Repartition')
+
+col2.plotly_chart(fig_weights)

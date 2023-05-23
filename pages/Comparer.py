@@ -173,7 +173,8 @@ if st.checkbox(f'See change rate for {currency}TAL'):
 
     st.plotly_chart(fig2,  use_container_width=True)
 st.markdown("""---""")
-st.markdown(f' 1000 TAL on {start_date.split(" ")[0]} would cost you {round(currency_qty_1,2)} {currency} || 1000 TAL on {end_date.split(" ")[0]} would cost you {round(final_currency_qty,2)} {currency}')
+st.markdown(f' 1000 TAL on {start_date.split(" ")[0]} would cost you {round(currency_qty_1,2)} {currency}')
+st.markdown(f' 1000 TAL on {end_date.split(" ")[0]} would cost you {round(final_currency_qty,2)} {currency}')
 if percentage_difference > 0:
         st.markdown(f' {currency} has lost {round(percentage_difference,2)}% of its value in {delta.days} days when paired with TAL ')
 else:
