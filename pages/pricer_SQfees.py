@@ -153,18 +153,7 @@ def conversion_fees_SQ(from_currency, to_currency, amount):
     response_data = json.loads(response_text)
     return round(float((response_data["convertedAmount"]))*(1 - float(fees_SQ(from_currency,to_currency,amount))),2)
 
-left_column, right_column = st.columns(2)
-
-left_column_width = 0.5
-right_column_width = 0.5
-
-# Set the column widths
-left_column = left_column.container()
-right_column = right_column.container()
-
-# Apply custom CSS to adjust column width
-left_column.markdown(f'<style>div.stButton > button {{ width: {left_column_width*100}% }}</style>', unsafe_allow_html=True)
-right_column.markdown(f'<style>div.stButton > button {{ width: {right_column_width*100}% }}</style>', unsafe_allow_html=True)
+left_column, right_column = st.columns([5,1])
 
 # Add content to the left column
 with left_column:
@@ -208,44 +197,3 @@ with left_column:
 
     fees_diff = (round(rate_currency_to_TAL(currency)*sum,2) - output_amount) / round(rate_currency_to_TAL(currency)*sum,2) *100    
     st.warning(f'Difference between theorical amount and final amount : {round(fees_diff,4)} % ')
-
-
-    
-# Add content to the right column
-with right_column:
-    st.header('Exiting TAL')
-    # Add your content here
-    qty2 = st.number_input('Select quantity of TAL:', min_value=0, max_value=1000000000, value=0, step=1000)
-    currency2 = st.selectbox('Choose a currency in which you want to convert TAL:',  ['EUR','USD'] + list(currency_country_map_SQ.keys()))
-    
-    if qty2 == ""   :
-        qty2 = 0
-
-    st.write(f"You will receive = {round(rate_TAL_to_currency(currency2)*float(qty2),4)} {currency2}")
-    st.markdown('<body> <I> <p style="color:lightblue ";>This amount is without exit fees.</p></I></body>', unsafe_allow_html=True)
-
-
-    data2 = pd.DataFrame({'TAL amount ': [qty2], 'Output amount ': [round(rate_TAL_to_currency(currency2)*float(qty2),2)], 'Output currency ': [currency2]})
-
-    chf2 = qty2*100/1000
-    eur2 = qty2*250/1000
-    gbp2 = qty2*50/1000
-    jpy2 = qty2*18000/1000
-    cny2 = qty2*1600/1000
-    sgd2 = qty2*80/1000
-    usd2 = qty2*float(database.tail(1)['GLDUSD'] * 0.2)/1000
-    gold2 = usd2/float(database.tail(1)['GLDUSD'])
-
-    repartition2 = pd.DataFrame({'Currency': ['CHF', 'EUR', 'GBP', 'JPY', 'CNY', 'SGD', 'Gold oz'],
-                            'Amount': [chf2, eur2, gbp2, jpy2, cny2, sgd2, gold2],
-                            f'Amount in {currency2}': [conversion('CHF',currency2,chf2), conversion('EUR',currency2,eur2), conversion('GBP',currency2,gbp2), conversion('JPY',currency2,jpy2), conversion('CNY',currency2,cny2), conversion('SGD',currency2,sgd2), conversion('USD',currency2,usd2)]})
-
-    # Plot the data in a pie chart
-    fig2 = px.pie(repartition2, values=f'Amount in {currency2}', names=[f"{row['Currency']} - {round(row['Amount'],2)}" for _, row in repartition2.iterrows()], title='Basket Repartition before exit')
-
-
-    right_column.plotly_chart(fig2, use_container_width=True)
-   
-    if st.checkbox('Show data'):   
-        st.dataframe(data2)
-        st.dataframe(repartition2)   
