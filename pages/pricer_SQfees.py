@@ -208,7 +208,7 @@ with left_column:
     st.write(f'Amount with fees and comission = {round(rate_currency_to_TAL(currency)*sum,2)} TAL')
 
     fees_diff = (round(rate_currency_to_TAL(currency)*sum,2) - output_amount) / round(rate_currency_to_TAL(currency)*sum,2) *100    
-    st.warning(f'Difference between theorical amount and final amount : {fees_diff}')
+    st.warning(f'Difference between theorical amount and final amount : {round(fees_diff,4)} % ')
 
 
     
