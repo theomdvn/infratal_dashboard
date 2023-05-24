@@ -193,7 +193,6 @@ with left_column:
                             f'Amount in {currency} with fees':[conversion_fees_SQ('CHF',currency,chf), conversion_fees_SQ('EUR',currency,eur), conversion_fees_SQ('GBP',currency,gbp), conversion_fees_SQ('JPY',currency,jpy), conversion_fees_SQ('CNY',currency,cny), conversion_fees_SQ('SGD',currency,sgd), conversion_fees_SQ('USD',currency,usd)]})
     st.dataframe(repartition)
     sum = repartition[f'Amount in {currency} with fees'].sum()
-    st.write(sum)
     
     st.write(f"Theorical amount without comission {output_amount} TAL")
     st.write(f'Amount with fees without comission = {round(rate_currency_to_TAL(currency)*sum,2)} TAL')
