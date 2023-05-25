@@ -8,8 +8,6 @@ import requests
 import json
 from Home import database
 
-st.title('Pitcheck')
-
 df = database
 df['EURUSD'] = 1/df['USDEUR']
 df['GLDEUR'] = df['GLDUSD']*df['USDEUR']
