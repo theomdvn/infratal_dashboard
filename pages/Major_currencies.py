@@ -31,7 +31,7 @@ fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H
 fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'USD').diff().cumsum(), name='$'))
 fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'CHF').diff().cumsum(), name='CHF'))
 fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'GBP').diff().cumsum(), name='£'))
-fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'JPY').diff().cumsum(), name='JPY'))
+fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'JPY')*100).diff().cumsum(), name='JPY'))
 fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'CNY').diff().cumsum(), name='CNY'))
 fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'SGD').diff().cumsum(), name='SGD'))
 fig.update_layout( xaxis_title='Date', height=800)
