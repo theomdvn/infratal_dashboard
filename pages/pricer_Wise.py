@@ -154,13 +154,13 @@ with right_column:
 
     st.markdown('*WITH COMISSION (0.5%)*')
     com = round(rate_TAL_to_currency(currency2),2)*(0.005*qty2)
-    st.write(f"Theorical amount with comission : {round(rate_TAL_to_currency(currency2)*float(qty2),2)*0.97} {currency2}")
+    st.write(f"Theorical amount with comission : {round(rate_TAL_to_currency(currency2)*float(qty2)*0.97,2)} {currency2}")
     st.write(f"Comission collected : {com} {currency2} or {conversion_with_fees(currency2,'CHF',com)[1]} CHF")
     
     
     st.markdown('---')
     sum2 -= com
-    st.write(f'Amount with SQ fees and TAL comission : {sum2} {currency2}')
+    st.write(f'Amount with SQ fees and TAL comission : {round(sum2,2)} {currency2}')
 
     fees_diff2 = (sum2 - round(rate_TAL_to_currency(currency2)*float(qty2),2)) / sum2 * 100    
     st.warning(f'Difference between theorical amount and final amount : {round(fees_diff2,4)} % ')
