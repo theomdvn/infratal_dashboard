@@ -32,14 +32,17 @@ fig =  go.Figure()
 # Line filled with zeros, with flashy color
 fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=np.zeros(len(filtered_df.index)), name='sTAL', line=dict(color='lightblue')))
 
+prices = 1/filtered_df['TAL']
+
+variations = (prices - prices.iloc[0]) / prices.iloc[0]
 # Other traces, with more muted colors
-fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(1/filtered_df['TAL']).pct_change().cumsum(), name='€', line=dict(color='darkblue')))
-fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'USD').pct_change().cumsum(), name='$', line=dict(color='darkgreen')))
-fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'CHF').pct_change().cumsum(), name='CHF', line=dict(color='maroon')))
-fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'GBP').pct_change().cumsum(), name='£', line=dict(color='indigo')))
-fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'JPY').pct_change().cumsum(), name='JPY', line=dict(color='saddlebrown')))
-fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'CNY').pct_change().cumsum(), name='CNY', line=dict(color='darkorange')))
-fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'SGD').pct_change().cumsum(), name='SGD', line=dict(color='deeppink')))
+fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=variations, name='€', line=dict(color='darkblue')))
+fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'USD') - XXXTAL(filtered_df,'USD').iloc[0]) / XXXTAL(filtered_df,'USD').iloc[0], name='$'))
+fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'CHF') - XXXTAL(filtered_df,'CHF').iloc[0]) / XXXTAL(filtered_df,'CHF').iloc[0], name='CHF'))
+fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'GBP') - XXXTAL(filtered_df,'GBP').iloc[0]) / XXXTAL(filtered_df,'GBP').iloc[0], name='£'))
+fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'JPY') - XXXTAL(filtered_df,'JPY').iloc[0]) / XXXTAL(filtered_df,'JPY').iloc[0], name='JPY'))
+fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'CNY') - XXXTAL(filtered_df,'CNY').iloc[0]) / XXXTAL(filtered_df,'CNY').iloc[0], name='CNY'))
+fig.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'SGD') - XXXTAL(filtered_df,'SGD').iloc[0]) / XXXTAL(filtered_df,'SGD').iloc[0], name='SGD'))
 
 fig.update_layout(title='The Resilience of sTAL Against Single Currency Depreciation', xaxis_title='Date', height=800)
 
@@ -48,13 +51,13 @@ fig.update_layout(title='The Resilience of sTAL Against Single Currency Deprecia
 fig2 =  go.Figure()
 fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'), y=np.zeros(len(filtered_df.index)), name='sTAL', line=dict(color='lightblue')))
 
-fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'BRL').pct_change().cumsum(), name='BRL',line=dict(color='darkblue')))
-fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'CAD').pct_change().cumsum(), name='CAD',line=dict(color='darkgreen')))
-fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'TRY').pct_change().cumsum(), name='TRY',line=dict(color='maroon')))
-fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'INR').pct_change().cumsum(), name='INR',line=dict(color='indigo')))
-fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'KRW').pct_change().cumsum(), name='KRW',line=dict(color='saddlebrown')))
-fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'MXN').pct_change().cumsum(), name='MXN',line=dict(color='darkorange')))
-fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=XXXTAL(filtered_df,'ZAR').pct_change().cumsum(), name='ZAR',line=dict(color='deeppink')))
+fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'BRL') - XXXTAL(filtered_df,'BRL').iloc[0]) / XXXTAL(filtered_df,'BRL').iloc[0], name='BRL'))
+fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'CAD') - XXXTAL(filtered_df,'CAD').iloc[0]) / XXXTAL(filtered_df,'CAD').iloc[0], name='CAD'))
+fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'TRY') - XXXTAL(filtered_df,'TRY').iloc[0]) / XXXTAL(filtered_df,'TRY').iloc[0], name='TRY'))
+fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'INR') - XXXTAL(filtered_df,'INR').iloc[0]) / XXXTAL(filtered_df,'INR').iloc[0], name='INR'))
+fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'KRW') - XXXTAL(filtered_df,'KRW').iloc[0]) / XXXTAL(filtered_df,'KRW').iloc[0], name='KRW'))
+fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'MXN') - XXXTAL(filtered_df,'MXN').iloc[0]) / XXXTAL(filtered_df,'MXN').iloc[0], name='MXN'))
+fig2.add_trace(go.Scatter(x=pd.to_datetime(filtered_df.index, format='%d/%m/%Y %H:%M'),y=(XXXTAL(filtered_df,'ZAR') - XXXTAL(filtered_df,'ZAR').iloc[0]) / XXXTAL(filtered_df,'ZAR').iloc[0], name='ZAR'))
 
 
 fig2.update_layout(title='sTAL : A Defense Against Value Depreciation in Emerging Market Currencies', xaxis_title='Date', height=800)
@@ -64,7 +67,3 @@ st.plotly_chart(fig, use_container_width=True)
 st.markdown('---')
 
 st.plotly_chart(fig2, use_container_width=True)
-
-
-st.write(filtered_df['TAL'].head(1))
-st.write(filtered_df['TAL'].tail(300))
