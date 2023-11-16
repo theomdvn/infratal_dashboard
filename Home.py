@@ -146,3 +146,6 @@ left_co, cent_co,last_co = st.columns(3)
 with cent_co:
     st.image('https://i.postimg.cc/g0JMMBbp/LOGO-TAL-AVEC-SIGNATURE.png')
 
+
+    st.dataframe(database)
+
